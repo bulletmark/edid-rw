@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+'''
+Program to read or write Extended Display Identification Data (EDID)
+to a digital display.
+'''
+# (C) Mark Blakeney, markb@berlios.de, April 2012.
+
+EDID_LEN = 128
+EDID_ADDR = 0x50
+
+import sys, array, argparse
+from smbus import SMBus
+
+def checksum(edid):
+    'Return EDID checksum of the given buffer'
+    return sum(edid) % 256
+
+def main():
+    '''Main code'''
+
+    # Process command line options
+    opt = argparse.ArgumentParser(description=__doc__.strip() + '''
+    Default action is to READ binary EDID data from specified i2c_device and
+    write it to standard output. With "-w", will instead read EDID
+    binary data from standard input and WRITE it to specified i2c_device.
+    Always validates the EDID checksum before allowing a write to device.
+    ''')
+    opt.add_argument('-w', '--write', action='store_true',
+            help='Write EDID to i2c_device from data read from stdin')
+    opt.add_argument('i2c_device_num', type=int,
+            help='i2c device number, e.g. 0 or 1 or 2 ..')
+    args = opt.parse_args()
+
+    smb = SMBus(args.i2c_device_num)
+
+    if args.write:
+        # Read EDID from stdin
+        edid = array.array('B', sys.stdin.read()).tolist()
+        if len(edid) != EDID_LEN:
+            sys.stderr.write('ERROR: Input must be %d bytes\n' % EDID_LEN)
+            sys.exit(1)
+
+        # Check the EDID checksum is valid
+        if checksum(edid) != 0:
+            sys.stdout.write('ERROR: Checksum 0x%02x is BAD, should be '
+                    '0x%02x.\n' % (edid[-1], (0 - checksum(edid[:-1])) % 256))
+            sys.exit(1)
+
+        # Write EDID to device
+        for i in range(EDID_LEN):
+            smb.write_byte_data(EDID_ADDR, i, edid[i])
+    else:
+        # Read EDID from device
+        edid = [smb.read_byte_data(EDID_ADDR, i) for i in range(EDID_LEN)]
+
+        # Write EDID to stdout
+        array.array('B', edid).tofile(sys.stdout)
+
+if __name__ == '__main__':
+    main()
