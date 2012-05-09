@@ -66,8 +66,4 @@ WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
 Public License at <http://www.gnu.org/licenses/> for more details.
 
-## Change History
-
-v1.0: Original version.
-
 <!-- vim: se ai syn=markdown: -->

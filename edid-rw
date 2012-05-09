@@ -13,7 +13,7 @@ from smbus import SMBus
 
 def checksum(edid):
     'Return EDID checksum of the given buffer'
-    return sum(edid) % 256
+    return (0 - (sum(edid[:-1]) % 256)) % 256
 
 def main():
     '''Main code'''
@@ -27,10 +27,13 @@ def main():
     ''')
     opt.add_argument('-w', '--write', action='store_true',
             help='Write EDID to i2c_device from data read from stdin')
+    opt.add_argument('-f', '--fix', action='store_true',
+            help='Fix last checksum byte automatically when writing the EDID')
     opt.add_argument('i2c_device_num', type=int,
             help='i2c device number, e.g. 0 or 1 or 2 ..')
     args = opt.parse_args()
 
+    # Access i2c device
     smb = SMBus(args.i2c_device_num)
 
     if args.write:
@@ -41,14 +44,21 @@ def main():
             sys.exit(1)
 
         # Check the EDID checksum is valid
-        if checksum(edid) != 0:
-            sys.stdout.write('ERROR: Checksum 0x%02x is BAD, should be '
-                    '0x%02x.\n' % (edid[-1], (0 - checksum(edid[:-1])) % 256))
-            sys.exit(1)
+        actsum = edid[-1]
+        calsum = checksum(edid)
+        if actsum != calsum:
+            if args.fix:
+                edid[-1] = calsum
+                sys.stdout.write('Checksum 0x%02x is BAD, rewrote it to '
+                        '0x%02x.\n' % (actsum, calsum))
+            else:
+                sys.stdout.write('ERROR: Checksum 0x%02x is BAD, should be '
+                        '0x%02x.\n' % (actsum, calsum))
+                sys.exit(1)
 
         # Write EDID to device
-        for i in range(EDID_LEN):
-            smb.write_byte_data(EDID_ADDR, i, edid[i])
+        for i, val in enumerate(edid):
+            smb.write_byte_data(EDID_ADDR, i, val)
     else:
         # Read EDID from device
         edid = [smb.read_byte_data(EDID_ADDR, i) for i in range(EDID_LEN)]
