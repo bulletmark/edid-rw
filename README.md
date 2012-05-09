@@ -4,8 +4,8 @@ This utility will read and/or write a display's EDID data structure. Use
 it with the edid-decode utility to view and check an EDID.
 You can also write new EDID data to attempt to fix a corrupt EDID.
 
-*WARNING - THIS UTILITY CAN DESTROY YOUR MONITOR IF YOU RUN IT
-INCORRECTLY. Be very sure you understand what you are doing.*
+*WARNING - THIS UTILITY CAN DESTROY YOUR DISPLAY IF RUN INCORRECTLY. Be
+very sure you understand what you are doing.*
 
 You may have to disable output to the display before you can write the
 EDID.
@@ -16,7 +16,6 @@ Prerequisites (e.g. on Debian/Ubuntu):
 
     sudo apt-get install edid-decode
     sudo apt-get install python-smbus
-
 
 Get source code:
 
@@ -29,6 +28,10 @@ Must start ic2 device module once each time after reboot:
 
     sudo modprobe i2c-dev
 
+Run with `-h` switch to see usage and optional arguments:
+
+    ./edid-rw -h
+
 Fetch and decode display 0 EDID data:
 
     sudo ./edid-rw 0 | edid-decode
@@ -38,10 +41,11 @@ Fetch and decode display 1 EDID data:
     sudo ./edid-rw 1 | edid-decode
 
 Capture display 0 EDID data, edit it, and write it back to device. Use
-`!xxd [-r]` within vim to read, edit, and write binary file. See `:h xxd`
-within vim help. You must always set the checksum (last) byte
-correctly. edid-rw will validate the checksum and will not write an
-invalid EDID.
+`!xxd [-r]` within vim to read, edit, and write binary file. See `:h
+xxd` within vim help. You should set the checksum (last) byte correctly
+although edit-rw will calculate and set the checksum itself if you
+include the `-f (--fix)` switch. edid-rw will always validate the
+checksum and will not write an invalid EDID:
 
     sudo ./edid-rw 0 >edid.bin
     vim -b edid.bin
