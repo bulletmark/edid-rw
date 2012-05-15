@@ -8,7 +8,7 @@ to a digital display.
 EDID_LEN = 128
 EDID_ADDR = 0x50
 
-import sys, array, argparse
+import sys, array, argparse, subprocess
 from smbus import SMBus
 
 def checksum(edid):
@@ -33,6 +33,12 @@ def main():
             help='i2c device number, e.g. 0 or 1 or 2 ..')
     args = opt.parse_args()
 
+    # Need ic2 device module installed
+    if subprocess.call(('modprobe', 'i2c-dev')) != 0:
+        sys.stderr.write('ERROR: Can not load i2c-dev. '
+                'Must use sudo or be root.\n')
+        sys.exit(1)
+
     # Access i2c device
     smb = SMBus(args.i2c_device_num)
 
@@ -49,10 +55,10 @@ def main():
         if actsum != calsum:
             if args.fix:
                 edid[-1] = calsum
-                sys.stdout.write('Checksum 0x%02x is BAD, rewrote it to '
+                sys.stdout.write('Checksum 0x%02x was BAD, rewrote it to '
                         '0x%02x.\n' % (actsum, calsum))
             else:
-                sys.stdout.write('ERROR: Checksum 0x%02x is BAD, should be '
+                sys.stderr.write('ERROR: Checksum 0x%02x is BAD, should be '
                         '0x%02x.\n' % (actsum, calsum))
                 sys.exit(1)
 
