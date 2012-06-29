@@ -36,8 +36,8 @@ Fetch and decode display 1 EDID data:
     sudo ./edid-rw 1 | edid-decode
 
 Capture display 0 EDID data, edit it, and write it back to device. Use
-`!Gxxd [-r]` within vim to read, edit, and write binary file. See `:h
-xxd` within vim help. You should set the checksum (last) byte correctly
+`!Gxxd [-r]` within vim to read, edit, and write binary file. See `:h xxd`
+within vim help. You should set the checksum (last) byte correctly
 although edit-rw will calculate and set the checksum itself if you
 include the `-f (--fix)` switch. edid-rw will always validate the
 checksum and will not write an invalid EDID:

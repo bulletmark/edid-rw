@@ -16,7 +16,7 @@ def checksum(edid):
     return (0 - (sum(edid[:-1]) % 256)) % 256
 
 def main():
-    '''Main code'''
+    'Main code'
 
     # Process command line options
     opt = argparse.ArgumentParser(description=__doc__.strip() + '''
