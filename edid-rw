@@ -1,15 +1,24 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 '''
 Program to read or write Extended Display Identification Data (EDID)
 to a digital display.
 '''
 # (C) Mark Blakeney, markb@berlios.de, April 2012.
 
-EDID_LEN = 128
+EDID_HDR = 20
+EDID_LEN = (128, 256)
 EDID_ADDR = 0x50
 
 import sys, array, argparse, subprocess
 from smbus import SMBus
+
+def getlen(edidhdr):
+    'Return the number of bytes expected for this edid hdr'
+    if edidhdr[18] <= 0 or edidhdr[18] > len(EDID_LEN):
+        sys.stderr.write('ERROR: Unknown EDID version %d\n' % edidhdr[18])
+        sys.exit(1)
+
+    return EDID_LEN[edidhdr[18] - 1]
 
 def checksum(edid):
     'Return EDID checksum of the given buffer'
@@ -45,8 +54,9 @@ def main():
     if args.write:
         # Read EDID from stdin
         edid = array.array('B', sys.stdin.read()).tolist()
-        if len(edid) != EDID_LEN:
-            sys.stderr.write('ERROR: Input must be %d bytes\n' % EDID_LEN)
+        edid_len = getlen(edid)
+        if len(edid) != edid_len:
+            sys.stderr.write('ERROR: Input must be %d bytes\n' % edid_len)
             sys.exit(1)
 
         # Check the EDID checksum is valid
@@ -67,7 +77,9 @@ def main():
             smb.write_byte_data(EDID_ADDR, i, val)
     else:
         # Read EDID from device
-        edid = [smb.read_byte_data(EDID_ADDR, i) for i in range(EDID_LEN)]
+        edid = [smb.read_byte_data(EDID_ADDR, i) for i in range(EDID_HDR)]
+        edid += [smb.read_byte_data(EDID_ADDR, i) for i in
+                range(EDID_HDR, getlen(edid))]
 
         # Write EDID to stdout
         array.array('B', edid).tofile(sys.stdout)
