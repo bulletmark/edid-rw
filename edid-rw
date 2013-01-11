@@ -5,6 +5,8 @@ to a digital display.
 '''
 # (C) Mark Blakeney, markb@berlios.de, April 2012.
 
+import time
+
 EDID_HDR = 20
 EDID_LEN = (128, 256)
 EDID_ADDR = 0x50
@@ -38,6 +40,8 @@ def main():
             help='Write EDID to i2c_device from data read from stdin')
     opt.add_argument('-f', '--fix', action='store_true',
             help='Fix last checksum byte automatically when writing the EDID')
+    opt.add_argument('-s', '--sleep', default=0, type=float,
+            help='Sleep this many seconds between writes')
     opt.add_argument('i2c_device_num', type=int,
             help='i2c device number, e.g. 0 or 1 or 2 ..')
     args = opt.parse_args()
@@ -75,6 +79,7 @@ def main():
         # Write EDID to device
         for i, val in enumerate(edid):
             smb.write_byte_data(EDID_ADDR, i, val)
+            time.sleep(args.sleep)
     else:
         # Read EDID from device
         edid = [smb.read_byte_data(EDID_ADDR, i) for i in range(EDID_HDR)]
