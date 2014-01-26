@@ -12,11 +12,17 @@ EDID.
 
 ## Installation
 
-Prerequisites (e.g. on Debian/Ubuntu):
+Requires python smbus module and edid-decode utility.
+
+Install these prerequisites on Debian/Ubuntu:
 
     sudo apt-get install python-smbus edid-decode
 
-Get source code:
+Or, install these prerequisites on Arch:
+
+    yaourt -S i2c-tools edid-decode-git
+
+Get this source code:
 
     git clone https://github.com/bulletmark/edid-rw
     cd edid-rw
