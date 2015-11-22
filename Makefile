@@ -12,6 +12,7 @@
 # General Public License at <http://www.gnu.org/licenses/> for more
 # details.
 
+PROG = edid-rw
 SRC = README.md
 DOC = $(SRC:.md=.html)
 
@@ -20,5 +21,8 @@ doc:	$(DOC)
 $(DOC): $(SRC)
 	markdown $< >$@
 
-clean:
+install::
+	install -CD $(PROG) ~/bin
+
+clean::
 	rm -rf $(DOC)
