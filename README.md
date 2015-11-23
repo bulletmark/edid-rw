@@ -4,10 +4,10 @@ This utility will read and/or write a display's EDID data structure. Use
 it with the edid-decode utility to view and check an EDID.
 You can also write new EDID data to attempt to fix a corrupt EDID.
 
-*WARNING - THIS UTILITY CAN DESTROY YOUR DISPLAY OR MOTHERBOARD
-IF RUN INCORRECTLY. Be very sure you understand what you are doing. See
-[this issue](http://github.com/bulletmark/edid-rw/issues/5) for an
-example of what can happen.*
+*WARNING - THIS UTILITY CAN DESTROY YOUR DISPLAY, MOTHERBOARD, OR OTHER
+CONNECTED HARDWARE IF RUN INCORRECTLY. Be very sure you understand what
+you are doing. See [this issue](http://github.com/bulletmark/edid-rw/issues/5)
+for an example of what can happen.*
 
 You may have to disable output to the display before you can write the
 EDID.
@@ -28,6 +28,8 @@ Get this source code:
 
     git clone https://github.com/bulletmark/edid-rw
     cd edid-rw
+
+This utility should run using python version 2.5+, or 3+.
 
 ## Usage
 

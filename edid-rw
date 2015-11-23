@@ -1,7 +1,11 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 '''
-Program to read or write Extended Display Identification Data (EDID)
-to a digital display.
+Program to read or write Extended Display Identification Data (EDID) to
+a digital display. Default action is to READ binary EDID data from
+specified i2c_device and write it to standard output. With "-w", will
+instead read EDID binary data from standard input and WRITE it to
+specified i2c_device. Always validates the EDID checksum before allowing
+a write to device.
 '''
 # (C) Mark Blakeney, markb@berlios.de, April 2012.
 
@@ -9,7 +13,7 @@ EDID_HDR = 20
 EDID_LEN = (128, 256)
 EDID_ADDR = 0x50
 
-import sys, array, argparse, subprocess, time
+import os, sys, array, argparse, subprocess, time
 
 class stddev(object):
     'Standard input/output device for testing'
@@ -19,20 +23,16 @@ class stddev(object):
 
     def read(self, n):
         'Read a byte from stdin'
-        return array.array('B', sys.stdin.read(1)).tolist()[0]
+        return array.array('B', os.read(sys.stdin.fileno(), 1)).tolist()[0]
 
     def write(self, n, val):
         'Write a byte to stdout'
-        array.array('B', (val,)).tofile(sys.stdout)
+        os.write(sys.stdout.fileno(), array.array('B', (val,)).tostring())
 
 class smbdev(object):
     'SMB device'
     def __init__(self, args):
         'Create SMB device'
-        if args.i2c_device_num is None:
-            sys.stderr.write('ERROR: must specify an I2C device number\n')
-            sys.exit(1)
-
         # Need ic2 device module installed
         from smbus import SMBus
         if subprocess.call(('modprobe', 'i2c-dev')) != 0:
@@ -41,7 +41,7 @@ class smbdev(object):
             sys.exit(1)
 
         # Access i2c device
-        self.smb = SMBus(args.i2c_device_num)
+        self.smb = SMBus(args.i2c_device_num[0])
 
     def read(self, n):
         'Read a byte from given SMB device'
@@ -71,22 +71,18 @@ def main():
     'Main code'
 
     # Process command line options
-    opt = argparse.ArgumentParser(description=__doc__.strip() + '''
-    Default action is to READ binary EDID data from specified i2c_device and
-    write it to standard output. With "-w", will instead read EDID
-    binary data from standard input and WRITE it to specified i2c_device.
-    Always validates the EDID checksum before allowing a write to device.
-    ''')
+    opt = argparse.ArgumentParser(description=__doc__.strip(),
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     opt.add_argument('-w', '--write', action='store_true',
             help='Write EDID to i2c_device from data read from stdin')
     opt.add_argument('-t', '--std', action='store_true',
             help='Read stdin or write stdout only, for testing')
     opt.add_argument('-f', '--fix', action='store_true',
-            help=\
-'Fix last checksum byte automatically when writing the EDID and extensions')
+            help='Fix last checksum byte automatically when writing the '
+            'EDID and extensions')
     opt.add_argument('-s', '--sleep', default=0.01, type=float,
             help='Sleep this many seconds between writes')
-    opt.add_argument('i2c_device_num', nargs='?', type=int,
+    opt.add_argument('i2c_device_num', nargs=1, type=int,
             help='i2c device number, e.g. 0 or 1 or 2 ..')
     args = opt.parse_args()
 
@@ -95,7 +91,8 @@ def main():
 
     if args.write:
         # Read EDID from stdin
-        edid = array.array('B', sys.stdin.read()).tolist()
+        edid = array.array('B', os.read(sys.stdin.fileno(),
+            max(EDID_LEN))).tolist()
         edid_len = getlen(edid)
         edid_n = edid[edid_len - 2]
         nbytes = edid_len + (edid_len * edid_n)
@@ -135,7 +132,7 @@ def main():
                 range(edid_len, edid_len + edid_len * edid[-2])]
 
         # Write EDID to stdout
-        array.array('B', edid).tofile(sys.stdout)
+        os.write(sys.stdout.fileno(), array.array('B', edid).tostring())
 
 if __name__ == '__main__':
     main()
