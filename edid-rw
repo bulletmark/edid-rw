@@ -84,7 +84,7 @@ def main():
     opt.add_argument('-f', '--fix', action='store_true',
             help=\
 'Fix last checksum byte automatically when writing the EDID and extensions')
-    opt.add_argument('-s', '--sleep', default=0, type=float,
+    opt.add_argument('-s', '--sleep', default=0.01, type=float,
             help='Sleep this many seconds between writes')
     opt.add_argument('i2c_device_num', nargs='?', type=int,
             help='i2c device number, e.g. 0 or 1 or 2 ..')
