@@ -9,11 +9,12 @@ a write to device.
 '''
 # (C) Mark Blakeney, markb@berlios.de, April 2012.
 
+import os, sys, array, argparse, subprocess, time
+from smbus import SMBus
+
 EDID_HDR = 20
 EDID_LEN = (128, 256)
 EDID_ADDR = 0x50
-
-import os, sys, array, argparse, subprocess, time
 
 class stddev(object):
     'Standard input/output device for testing'
@@ -34,11 +35,8 @@ class smbdev(object):
     def __init__(self, args):
         'Create SMB device'
         # Need ic2 device module installed
-        from smbus import SMBus
         if subprocess.call(('modprobe', 'i2c-dev')) != 0:
-            sys.stderr.write('ERROR: Can not load i2c-dev. '
-                    'Must use sudo or be root.\n')
-            sys.exit(1)
+            sys.exit('ERROR: Can not load i2c-dev. Must use sudo or be root.')
 
         # Access i2c device
         self.smb = SMBus(args.i2c_device_num[0])
@@ -54,8 +52,7 @@ class smbdev(object):
 def getlen(edidhdr):
     'Return the number of bytes expected for this edid hdr'
     if edidhdr[18] <= 0 or edidhdr[18] > len(EDID_LEN):
-        sys.stderr.write('ERROR: Unknown EDID version %d\n' % edidhdr[18])
-        sys.exit(1)
+        sys.exit('ERROR: Unknown EDID version %d' % edidhdr[18])
 
     return EDID_LEN[edidhdr[18] - 1]
 
@@ -97,25 +94,21 @@ def main():
         edid_n = edid[edid_len - 2]
         nbytes = edid_len + (edid_len * edid_n)
         if len(edid) != nbytes:
-            sys.stderr.write('ERROR: Input must be %d bytes\n' % nbytes)
-            sys.exit(1)
+            sys.exit('ERROR: Input must be %d bytes' % nbytes)
 
         # Check each EDID block checksum is valid
         for b in range(edid_n + 1):
             x = (b + 1) * edid_len
             actsum = edid[x - 1]
-            calsum = checksum(edid[x-edid_len:x])
+            calsum = checksum(edid[x - edid_len:x])
             if actsum != calsum:
                 if args.fix:
                     edid[x - 1] = calsum
-                    sys.stderr.write( \
-                            '%s checksum 0x%02x was BAD, rewrote it to '
-                            '0x%02x.\n' % (blkname(b), actsum, calsum))
+                    sys.exit('%s checksum 0x%02x was BAD, rewrote it to '
+                            '0x%02x.' % (blkname(b), actsum, calsum))
                 else:
-                    sys.stderr.write( \
-                            'ERROR: %s checksum 0x%02x is BAD, should be '
-                            '0x%02x.\n' % (blkname(b), actsum, calsum))
-                    sys.exit(1)
+                    sys.exit('ERROR: %s checksum 0x%02x is BAD, should be '
+                            '0x%02x.' % (blkname(b), actsum, calsum))
 
         # Write EDID to device
         for i, val in enumerate(edid):
@@ -128,7 +121,7 @@ def main():
         edid += [dev.read(i) for i in range(EDID_HDR, edid_len)]
 
         # Read extensions from device (if any)
-        edid += [dev.read(i) for i in \
+        edid += [dev.read(i) for i in
                 range(edid_len, edid_len + edid_len * edid[-2])]
 
         # Write EDID to stdout
