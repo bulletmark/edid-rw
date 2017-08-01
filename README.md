@@ -61,7 +61,7 @@ write!*
 
 ## Author
 
-Mark Blakeney, <mailto:markb@berlios.de>.
+Mark Blakeney, <mailto:mark.blakeney@bullet-systems.net>.
 
 ## License
 

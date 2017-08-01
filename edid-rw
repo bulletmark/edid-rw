@@ -7,7 +7,7 @@ instead read EDID binary data from standard input and WRITE it to
 specified i2c_device. Always validates the EDID checksum before allowing
 a write to device.
 '''
-# (C) Mark Blakeney, markb@berlios.de, April 2012.
+# (C) Mark Blakeney, April 2012.
 
 import os, sys, array, argparse, subprocess, time
 from smbus import SMBus

@@ -1,5 +1,5 @@
-# Copyright (C) 2012 Mark Blakeney, markb@berlios.de. This program is
-# distributed under the terms of the GNU General Public License.
+# Copyright (C) 2012 Mark Blakeney. This program is distributed under
+# the terms of the GNU General Public License.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
