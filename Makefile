@@ -21,6 +21,10 @@ doc:	$(DOC)
 $(DOC): $(SRC)
 	markdown $< >$@
 
+check:
+	flake8 $(PROG)
+	vermin -i -q $(PROG)
+
 install::
 	install -CD $(PROG) ~/bin
 
