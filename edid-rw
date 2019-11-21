@@ -28,7 +28,7 @@ class stddev(object):
 
     def write(self, n, val):
         'Write a byte to stdout'
-        os.write(sys.stdout.fileno(), array.array('B', (val,)).tostring())
+        os.write(sys.stdout.fileno(), array.array('B', (val,)).tobytes())
 
 class smbdev(object):
     'SMB device'
@@ -125,7 +125,7 @@ def main():
                 range(edid_len, edid_len + edid_len * edid[-2])]
 
         # Write EDID to stdout
-        os.write(sys.stdout.fileno(), array.array('B', edid).tostring())
+        os.write(sys.stdout.fileno(), array.array('B', edid).tobytes())
 
 if __name__ == '__main__':
     main()
