@@ -14,11 +14,11 @@ EDID.
 
 ## Installation
 
-Requires python smbus module and edid-decode utility.
+Requires python3 smbus module, and edid-decode utility.
 
 Install these prerequisites on Debian/Ubuntu:
 
-    sudo apt-get install python-smbus edid-decode
+    sudo apt-get install python3-smbus edid-decode
 
 Or, install these prerequisites on Arch:
 
@@ -29,7 +29,8 @@ Get this source code:
     git clone https://github.com/bulletmark/edid-rw
     cd edid-rw
 
-This utility should run using python version 2.5+, or 3+.
+This utility should run using Python version 3.2+. It does not work with
+Python 2.
 
 ## Usage
 

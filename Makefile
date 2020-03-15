@@ -23,7 +23,7 @@ $(DOC): $(SRC)
 
 check:
 	flake8 $(PROG)
-	vermin -i -q $(PROG)
+	vermin --no-tips -i -q $(PROG)
 
 install::
 	install -CD $(PROG) ~/bin
