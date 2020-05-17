@@ -22,7 +22,7 @@ Install these prerequisites on Debian/Ubuntu:
 
 Or, install these prerequisites on Arch:
 
-    yaourt -S i2c-tools edid-decode-git
+    yay -S i2c-tools edid-decode-git
 
 Get this source code:
 

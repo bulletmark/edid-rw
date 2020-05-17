@@ -9,7 +9,12 @@ a write to device.
 '''
 # (C) Mark Blakeney, April 2012.
 
-import os, sys, array, argparse, subprocess, time
+import os
+import sys
+import array
+import argparse
+import subprocess
+import time
 from smbus import SMBus
 
 EDID_HDR = 20
