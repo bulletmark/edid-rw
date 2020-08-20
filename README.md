@@ -1,5 +1,11 @@
 ## edid-rw: A utility to read and write a display EDID value
 
+_Sorry, but I do not support this project anymore. I wrote this utility
+for my own one-off personal use many years ago but have no means to test
+and support changes nowadays. Feel free to fork and improve it._
+
+### Overview
+
 This utility will read and/or write a display's EDID data structure. Use
 it with the edid-decode utility to view and check an EDID.
 You can also write new EDID data to attempt to fix a corrupt EDID.
@@ -12,7 +18,7 @@ for an example of what can happen.*
 You may have to disable output to the display before you can write the
 EDID.
 
-## Installation
+### Installation
 
 Requires python3 smbus module, and edid-decode utility.
 
@@ -32,7 +38,7 @@ Get this source code:
 This utility should run using Python version 3.2+. It does not work with
 Python 2.
 
-## Usage
+### Usage
 
 Run with `-h` switch to see usage and optional arguments:
 
@@ -60,11 +66,11 @@ write!*
     vim -b edid.bin # Then use xxd within vim, see ":h xxd" in vim
     sudo ./edid-rw -w 0 <edid.bin
 
-## Author
+### Author
 
 Mark Blakeney, <mailto:mark.blakeney@bullet-systems.net>.
 
-## License
+### License
 
 Copyright (C) 2012 Mark Blakeney. This program is distributed under the
 terms of the GNU General Public License.

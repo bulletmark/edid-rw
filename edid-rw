@@ -21,7 +21,7 @@ EDID_HDR = 20
 EDID_LEN = (128, 256)
 EDID_ADDR = 0x50
 
-class stddev(object):
+class STDDEV:
     'Standard input/output device for testing'
     def __init__(self, args):
         'Create standard input/output device'
@@ -35,7 +35,7 @@ class stddev(object):
         'Write a byte to stdout'
         os.write(sys.stdout.fileno(), array.array('B', (val,)).tobytes())
 
-class smbdev(object):
+class SMBDEV:
     'SMB device'
     def __init__(self, args):
         'Create SMB device'
@@ -89,7 +89,7 @@ def main():
     args = opt.parse_args()
 
     # Assign smb device, or stdin/stdout for testing
-    dev = stddev(args) if args.std else smbdev(args)
+    dev = STDDEV(args) if args.std else SMBDEV(args)
 
     if args.write:
         # Read EDID from stdin
