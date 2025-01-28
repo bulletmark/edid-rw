@@ -22,7 +22,7 @@ $(DOC): $(SRC)
 	markdown $< >$@
 
 check:
-	flake8 $(PROG)
+	ruff check $(PROG)
 	vermin --no-tips -i -q $(PROG)
 
 install::
