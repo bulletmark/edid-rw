@@ -83,6 +83,6 @@ version.
 This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-Public License at <http://www.gnu.org/licenses/> for more details.
+Public License at <https://en.wikipedia.org/wiki/GNU_General_Public_License> for more details.
 
 <!-- vim: se ai syn=markdown: -->
